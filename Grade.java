@@ -1,46 +1,55 @@
-package assignment;
+package AOOPAssignment;
 
 import java.io.Serializable;
 
-// The Grade class represents a student's grades for midterm and finals, and calculates weighted total and letter grade.
+/**
+ * The Grade class represents a student's grades for midterm and finals.
+ * It provides methods to calculate the total score and determine the letter grade.
+ */
 public class Grade implements Serializable {
 
     // Fields to store midterm and finals scores
     private int midterm;
     private int finals;
 
-    // Constructor to initialize midterm and finals scores
+    /**
+     * Constructor to initialize midterm and finals scores.
+     * @param midterm the midterm exam score
+     * @param finals the final exam score
+     */
     public Grade(int midterm, int finals) {
         this.midterm = midterm;
         this.finals = finals;
     }
 
-    // Getter for midterm score
+    // Getter and setter for Midterm marks
     public int getMidterm() {
         return midterm;
     }
-
-    // Setter for midterm score
     public void setMidterm(int midterm) {
         this.midterm = midterm;
     }
 
-    // Getter for finals score
+    // Getter and setter for Finals marks
     public int getFinals() {
         return finals;
     }
-
-    // Setter for finals score
     public void setFinals(int finals) {
         this.finals = finals;
     }
 
-    // Calculates the weighted total score (midterm 40%, finals 60%)
+    /**
+     * Calculates the total score based on weighted midterm (40%) and finals (60%).
+     * @return the total weighted score, rounded to the nearest integer
+     */
     public int getTotal() {
         return (int) Math.round(midterm * 0.4 + finals * 0.6);
     }
 
-    // Determines the letter grade based on the weighted total
+    /**
+     * Determines the letter grade based on the total score.
+     * @return the letter grade as a String ("A", "B", "C", "D", or "F")
+     */
     public String getLetterGrade() {
         int total = getTotal();
         if (total >= 80) {
@@ -56,10 +65,14 @@ public class Grade implements Serializable {
         }
     }
 
-    // Returns a string representation of the Grade object
+    /**
+     * Returns a string representation of the Grade object,
+     * including midterm, finals, total score, and letter grade.
+     * @return formatted string with grade details
+     */
     @Override
     public String toString() {
-        return String.format("Midterm: %d, Finals: %d, \nTotal: %d%%, \nGrade: %s",
+        return String.format("\n Midterm: %d, Finals: %d, \n Total: %d%%, \n Grade: %s\n",
                 midterm, finals, getTotal(), getLetterGrade());
     }
 }

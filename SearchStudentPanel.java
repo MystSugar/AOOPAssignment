@@ -1,107 +1,131 @@
-package assignment;
+package AOOPAssignment;
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
 /**
- * A JPanel that allows users to search for a student by ID and displays the
- * student's details.
+ * A JPanel that allows searching for a student by ID and displaying either their information or grades.
  */
 public class SearchStudentPanel extends JPanel {
 
-    private JTextField idField;      // Field for entering student ID
-    private JTextArea resultArea;    // Area to display search results
-    private JButton searchButton;    // Button to trigger search
+    private JTextField idField;      
+    private JTextArea resultArea;    
+    private JRadioButton infoRadio, gradesRadio;  
+    private JButton searchButton;    
 
     /**
      * Constructs the search panel UI and sets up event handling.
      */
     public SearchStudentPanel() {
-        setLayout(new GridBagLayout());
+        setLayout(new GridBagLayout()); 
         setBackground(new Color(230, 240, 255));
         setForeground(new java.awt.Color(0, 0, 0));
+
+        Font labelFont = new Font("Segoe UI", Font.BOLD, 14);
+        Font fieldFont = new Font("Segoe UI", Font.PLAIN, 14);
+
+        // Radio buttons for selection (Student Info or Grades) 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
-
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.WEST;
 
-        // Label for student ID input
+        infoRadio = new JRadioButton("Student Information");
+        gradesRadio = new JRadioButton("Grades");
+        infoRadio.setFont(fieldFont);
+        gradesRadio.setFont(fieldFont);
+        infoRadio.setBackground(new Color(230, 240, 255));
+        gradesRadio.setBackground(new Color(230, 240, 255));
+
+        // Group radio buttons so only one can be selected at a time
+        ButtonGroup group = new ButtonGroup();
+        group.add(infoRadio);
+        group.add(gradesRadio);
+        infoRadio.setSelected(true); // Default selection
+
+        // Panel to hold radio buttons
+        JPanel radioPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        radioPanel.setBackground(new Color(230, 240, 255));
+        radioPanel.add(infoRadio);
+        radioPanel.add(Box.createHorizontalStrut(20));
+        radioPanel.add(gradesRadio);
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        add(radioPanel, gbc);
+
+        // Label for student ID input 
         JLabel idLabel = new JLabel("Enter Student ID:");
+        idLabel.setFont(labelFont);
+
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.gridwidth = 1;
-        gbc.fill = GridBagConstraints.NONE;
         add(idLabel, gbc);
 
         // Text field for entering student ID
         idField = new JTextField(18);
+        idField.setFont(fieldFont);
+        idField.setToolTipText("Enter the unique ID of the student to search");
+
         gbc.gridx = 1;
-        gbc.fill = GridBagConstraints.HORIZONTAL; // Allow horizontal expansion
-        gbc.weightx = 1.0; // Give extra space to the text field
+        gbc.fill = GridBagConstraints.HORIZONTAL; 
+        gbc.weightx = 1.0; 
         add(idField, gbc);
-        gbc.weightx = 0; // Reset for other components
-        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0; 
 
-        // Search button
+        // Search button 
         searchButton = new JButton("Search Student");
-
         searchButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         searchButton.setToolTipText("Click to search for the student in the database");
 
-        // Panel to center the button horizontally
+        // Panel to center the button
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         buttonPanel.setBackground(new Color(230, 240, 255));
         buttonPanel.add(searchButton);
 
         gbc.gridx = 0;
-        gbc.gridy = 6; // Place button lower in the panel
+        gbc.gridy = 2; 
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         add(buttonPanel, gbc);
 
-        // Add action listener to handle deletion when button is clicked
-        searchButton.addActionListener(e -> searchStudent());
-
         // Area to display search results, inside a scroll pane
-        resultArea = new JTextArea(28, 70); // Increased rows for a bigger area
+        resultArea = new JTextArea(28, 70); 
         resultArea.setEditable(false);
-        resultArea.setFont(new Font("Monospaced", Font.PLAIN, 12)); // Optional: larger, readable font
-        JScrollPane scrollPane = new JScrollPane(resultArea);
+        resultArea.setFont(new Font("Segoe UI", Font.PLAIN, 13)); 
 
-        // Make the scroll pane expand horizontally and vertically
+        JScrollPane scrollPane = new JScrollPane(resultArea);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+
         gbc.gridy = 3;
         gbc.gridx = 0;
-        gbc.gridwidth = 2; // Span across both columns
+        gbc.gridwidth = 2; 
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         add(scrollPane, gbc);
 
-        // Reset gridbag constraints for next components
-        gbc.gridwidth = 1;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-
-        // Add action listener to the search button
+        // Add action listener to search button 
         searchButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                searchStudent(); // Perform search when button is clicked
+                searchStudent(); 
             }
         });
     }
 
     /**
-     * Searches for a student by ID and displays the result in the resultArea.
+     * Searches for a student by ID and displays either their information or grades.
      */
     private void searchStudent() {
         String id = idField.getText().trim();
-        resultArea.setText(""); // Clear previous results
+        resultArea.setText(""); 
 
-        // Show error if ID field is empty
         if (id.isEmpty()) {
+            // Show error if ID field is empty
             JOptionPane.showMessageDialog(this, "Please enter a Student ID.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -110,32 +134,34 @@ public class SearchStudentPanel extends JPanel {
         Student s = StudentDatabase.getStudentById(id);
         if (s != null) {
             StringBuilder sb = new StringBuilder();
-            sb.append("ID: ").append(s.getId()).append("\n");
-            sb.append("Name: ").append(s.getName()).append("\n");
-            sb.append("Gender: ").append(s.getGender()).append("\n");
-            sb.append("Age: ").append(s.getAge()).append("\n");
-            sb.append("Class: ").append(s.getStudentClass()).append("\n");
-            sb.append("DOB: ").append(s.getDob()).append("\n");
-            sb.append("\n\n");
-
-            // List of subjects to display grades for
-            String[] subjects = {"Maths", "Science", "English"};
-            sb.append("Grades:\n");
-            sb.append("-----------------------------\n");
-            for (String subject : subjects) {
-                sb.append(subject).append(":\n");
-                Grade grade = s.getGrade(subject);
-                if (grade != null) {
-                    sb.append("").append(grade.toString()).append("\n");
-                } else {
-                    sb.append("No grade available\n");
-                }
+            if (infoRadio.isSelected()) {
+                // Display student information
+                sb.append(" ID: ").append(s.getId()).append("\n");
+                sb.append(" Name: ").append(s.getName()).append("\n");
+                sb.append(" Gender: ").append(s.getGender()).append("\n");
+                sb.append(" Age: ").append(s.getAge()).append("\n");
+                sb.append(" Class: ").append(s.getStudentClass()).append("\n");
+                sb.append(" DOB: ").append(s.getDob()).append("\n");
+            } else if (gradesRadio.isSelected()) {
+                // Display student grades for each subject
+                String[] subjects = {"Maths", "Science", "English"};
                 sb.append("-----------------------------\n");
+                for (String subject : subjects) {
+                    sb.append(" ").append(subject).append(":");
+                    Grade grade = s.getGrade(subject);
+                
+                    if (grade != null) {
+                        sb.append(" ").append(grade.toString());
+                    } else {
+                        sb.append(" No grade available\n");
+                    }
+                    sb.append("-----------------------------\n");
+                }
             }
-
-            resultArea.setText(sb.toString()); // Display student info
+            resultArea.setText(sb.toString()); // Show results
         } else {
-            resultArea.setText("Student not found."); // Student not found
+            // Student not found
+            resultArea.setText("Student not found."); 
         }
     }
 }
